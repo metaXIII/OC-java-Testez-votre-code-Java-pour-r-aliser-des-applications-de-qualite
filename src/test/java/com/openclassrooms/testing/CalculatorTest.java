@@ -1,7 +1,11 @@
 package com.openclassrooms.testing;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.text.MessageFormat;
 import java.time.Duration;
@@ -10,137 +14,174 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Timeout;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
+import static java.lang.Math.PI;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.withinPercentage;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ExtendWith(LoggingExtension.class)
 public class CalculatorTest {
 
-	private static Instant startedAt;
+    private static Instant    startedAt;
+    private        Calculator calculatorUnderTest;
+    private        Logger     logger;
 
-	private Calculator calculatorUnderTest;
+    public void setLogger(Logger logger) {
+        this.logger = logger;
+    }
 
-	@BeforeEach
-	public void initCalculator() {
-		System.out.println("Appel avant chaque test");
-		calculatorUnderTest = new Calculator();
-	}
+    @BeforeEach
+    public void initCalculator() {
+        logger.info("Appel avant chaque test");
+        calculatorUnderTest = new Calculator();
+    }
 
-	@AfterEach
-	public void undefCalculator() {
-		System.out.println("Appel après chaque test");
-		calculatorUnderTest = null;
-	}
+    @AfterEach
+    public void undefCalculator() {
+        logger.info("Appel après chaque test");
+        calculatorUnderTest = null;
+    }
 
-	@BeforeAll
-	public static void initStartingTime() {
-		System.out.println("Appel avant tous les tests");
-		startedAt = Instant.now();
-	}
+    @BeforeAll
+    public static void initStartingTime() {
+        System.out.println("Appel avant tous les tests");
+        startedAt = Instant.now();
+    }
 
-	@AfterAll
-	public static void showTestDuration() {
-		System.out.println("Appel après tous les tests");
-		Instant endedAt = Instant.now();
-		long duration = Duration.between(startedAt, endedAt).toMillis();
-		System.out.println(MessageFormat.format("Durée des tests : {0} ms", duration));
-	}
+    @AfterAll
+    public static void showTestDuration() {
+        System.out.println("Appel après tous les tests");
+        Instant endedAt  = Instant.now();
+        long    duration = Duration.between(startedAt, endedAt).toMillis();
+        System.out.println(MessageFormat.format("Durée des tests : {0} ms", duration));
+    }
 
-	@Test
-	public void testAddTwoPositiveNumbers() {
-		// Arrange
-		int a = 2;
-		int b = 3;
+    @Test
+    @Tag("Quatre opérations")
+    public void testAddTwoPositiveNumbers() {
+        // Arrange
+        int a = 2;
+        int b = 3;
 
-		// Act
-		int somme = calculatorUnderTest.add(a, b);
+        // Act
+        int somme = calculatorUnderTest.add(a, b);
 
-		// Assert
-		assertThat(somme).isEqualTo(5);
-		assertEquals(5, somme);
-	}
+        // Assert
+        assertThat(somme).isEqualTo(5);
+        assertEquals(5, somme);
+    }
 
-	@Test
-	public void multiply_shouldReturnTheProduct_ofTwoIntegers() {
-		// Arrange
-		int a = 42;
-		int b = 11;
+    @Test
+    @Tag("Quatre opérations")
+    public void multiply_shouldReturnTheProduct_ofTwoIntegers() {
+        // Arrange
+        int a = 42;
+        int b = 11;
 
-		// Act
-		int produit = calculatorUnderTest.multiply(a, b);
+        // Act
+        int produit = calculatorUnderTest.multiply(a, b);
 
-		// Assert
-		assertEquals(462, produit);
-	}
+        // Assert
+        assertEquals(462, produit);
+    }
 
-	@ParameterizedTest(name = "{0} x 0 doit être égal à 0")
-	@ValueSource(ints = { 1, 2, 42, 1011, 5089 })
-	public void multiply_shouldReturnZero_ofZeroWithMultipleIntegers(int arg) {
-		// Arrange -- Tout est prêt !
+    @ParameterizedTest(name = "{0} x 0 doit être égal à 0")
+    @ValueSource(ints = {1, 2, 42, 1011, 5089})
+    public void multiply_shouldReturnZero_ofZeroWithMultipleIntegers(int arg) {
+        // Arrange -- Tout est prêt !
 
-		// Act -- Multiplier par zéro
-		int actualResult = calculatorUnderTest.multiply(arg, 0);
+        // Act -- Multiplier par zéro
+        int actualResult = calculatorUnderTest.multiply(arg, 0);
 
-		// Assert -- ça vaut toujours zéro !
-		assertEquals(0, actualResult);
-	}
+        // Assert -- ça vaut toujours zéro !
+        assertEquals(0, actualResult);
+    }
 
-	@ParameterizedTest(name = "{0} + {1} doit être égal à {2}")
-	@CsvSource({ "1,1,2", "2,3,5", "42,57,99" })
-	public void add_shouldReturnTheSum_ofMultipleIntegers(int arg1, int arg2, int expectResult) {
-		// Arrange -- Tout est prêt !
+    @ParameterizedTest(name = "{0} + {1} doit être égal à {2}")
+    @CsvSource({"1,1,2", "2,3,5", "42,57,99"})
+    public void add_shouldReturnTheSum_ofMultipleIntegers(int arg1, int arg2, int expectResult) {
+        // Arrange -- Tout est prêt !
 
-		// Act
-		int actualResult = calculatorUnderTest.add(arg1, arg2);
+        // Act
+        int actualResult = calculatorUnderTest.add(arg1, arg2);
 
-		// Assert
-		assertEquals(expectResult, actualResult);
-	}
+        // Assert
+        assertEquals(expectResult, actualResult);
+    }
 
-	@Timeout(1)
-	@Test
-	public void longCalcul_shouldComputeInLessThan1Second() {
-		// Arrange
+    @Timeout(1)
+    @Test
+    public void longCalcul_shouldComputeInLessThan1Second() {
+        // Arrange
 
-		// Act
-		calculatorUnderTest.longCalculation();
+        // Act
+        calculatorUnderTest.longCalculation();
 
-		// Assert
-		// ...
-	}
+        // Assert
+        // ...
+    }
 
-	@Test
-	public void listDigits_shouldReturnsTheListOfDigits_ofPositiveInteger() {
-		// GIVEN
-		int number = 95897;
+    @Test
+    public void listDigits_shouldReturnsTheListOfDigits_ofPositiveInteger() {
+        // GIVEN
+        int number = 95897;
 
-		// WHEN
-		Set<Integer> actualDigits = calculatorUnderTest.digitsSet(number);
+        // WHEN
+        Set<Integer> actualDigits = calculatorUnderTest.digitsSet(number);
 
-		// THEN
-		assertThat(actualDigits).containsExactlyInAnyOrder(9, 5, 8, 7);
-		Set<Integer> expectedDigits = Stream.of(5, 7, 8, 9).collect(Collectors.toSet());
-		assertEquals(expectedDigits, actualDigits);
-	}
+        // THEN
+        assertThat(actualDigits).containsExactlyInAnyOrder(9, 5, 8, 7);
+        Set<Integer> expectedDigits = Stream.of(5, 7, 8, 9).collect(Collectors.toSet());
+        assertEquals(expectedDigits, actualDigits);
+    }
 
-	@Test
-	public void listDigits_shouldReturnsTheListOfDigits_ofNegativeInteger() {
-		int number = -124432;
-		Set<Integer> actualDigits = calculatorUnderTest.digitsSet(number);
-		assertThat(actualDigits).containsExactlyInAnyOrder(1, 2, 3, 4);
-	}
+    @Test
+    public void listDigits_shouldReturnsTheListOfDigits_ofNegativeInteger() {
+        int          number       = -124432;
+        Set<Integer> actualDigits = calculatorUnderTest.digitsSet(number);
+        assertThat(actualDigits).containsExactlyInAnyOrder(1, 2, 3, 4);
+    }
 
-	@Test
-	public void listDigits_shouldReturnsTheListOfZero_ofZero() {
-		int number = 0;
-		Set<Integer> actualDigits = calculatorUnderTest.digitsSet(number);
-		assertThat(actualDigits).containsExactly(0);
-	}
+    @Test
+    public void listDigits_shouldReturnsTheListOfZero_ofZero() {
+        int          number       = 0;
+        Set<Integer> actualDigits = calculatorUnderTest.digitsSet(number);
+        assertThat(actualDigits).containsExactly(0);
+    }
+
+
+    @Nested // (3)
+    @Tag("TemperatureTests") // (4)
+    @DisplayName("Réussir à convertir des températures")
+            // (4)
+    class TemperatureTests {
+        @Test
+        @DisplayName("Soit une T° à 0°C, lorsque l'on convertit en °F, alors on obtient 32°F.")
+        public void celsiusToFahrenheit_returnsAFahrenheitTempurature_whenCelsiusIsZero() {
+            Double actualFahrenheit = calculatorUnderTest.celsiusToFahrenheit(0.0);
+            assertThat(actualFahrenheit).isCloseTo(32.0, withinPercentage(0.01));
+        }
+
+        @Test
+        @DisplayName("Soit une T° à 32°F, lorsque l'on convertit en °C, alors on obtient 0°C.")
+        public void fahrenheitToCelsius_returnsZeroCelciusTempurature_whenThirtyTwo() {
+            Double actualCelsius = calculatorUnderTest.fahrenheitToCelsius(32.0);
+            assertThat(actualCelsius).isCloseTo(0.0, withinPercentage(0.01));
+        }
+    }
+
+    @Test
+    @DisplayName("Soit un volume de 3.78541 litres, en gallons, on obtient 1 gallon.")
+    public void litresToGallons_returnsOneGallon_whenConvertingTheEquivalentLitres() {
+        Double actualLitres = calculatorUnderTest.litresToGallons(3.78541);
+        assertThat(actualLitres).isCloseTo(1.0, withinPercentage(0.01));
+    }
+
+    @Test
+    @DisplayName("L'aire d'un disque de rayon 1 doit valoir PI.")
+    public void radiusToAreaOfCircle_returnsPi_whenWeHaveARadiusOfOne() {
+        Double actualArea = calculatorUnderTest.radiusToAreaOfCircle(1.0);
+        assertThat(actualArea).isCloseTo(PI, withinPercentage(0.01));
+    }
 
 }
