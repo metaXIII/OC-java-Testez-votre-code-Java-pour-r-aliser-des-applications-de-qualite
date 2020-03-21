@@ -9,29 +9,14 @@ import java.text.MessageFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CalculatorTest {
 
     private static Instant startedAt;
 
     private Calculator calculatorUnderTest;
-
-    @BeforeEach
-    public void initCalculator() {
-        System.out.println("Appel avant chaque test");
-        calculatorUnderTest = new Calculator();
-    }
-
-    @AfterEach
-    public void undefCalculator() {
-        System.out.println("Appel après chaque test");
-        calculatorUnderTest = null;
-    }
 
     @BeforeAll
     public static void initStartingTime() {
@@ -45,6 +30,18 @@ public class CalculatorTest {
         Instant endedAt  = Instant.now();
         long    duration = Duration.between(startedAt, endedAt).toMillis();
         System.out.println(MessageFormat.format("Durée des tests : {0} ms", duration));
+    }
+
+    @BeforeEach
+    public void initCalculator() {
+        System.out.println("Appel avant chaque test");
+        calculatorUnderTest = new Calculator();
+    }
+
+    @AfterEach
+    public void undefCalculator() {
+        System.out.println("Appel après chaque test");
+        calculatorUnderTest = null;
     }
 
     @Test
@@ -113,26 +110,26 @@ public class CalculatorTest {
         // GIVEN
         int number = 95897;
         // WHEN
-        Set<Integer> actualDigits   = calculatorUnderTest.digitsSet(number);
+        Set<Integer> actualDigits = calculatorUnderTest.digitsSet(number);
         assertThat(actualDigits).containsExactlyInAnyOrder(5, 7, 8, 9);
     }
 
 
-	@Test
-	public void digitsSet_shouldReturnsTheSetOfDigits_ofNegativeInteger() {
-		// GIVEN
-		int number = -42004;
-		// WHEN
-		Set<Integer> actualDigits   = calculatorUnderTest.digitsSet(number);
-		assertThat(actualDigits).containsExactlyInAnyOrder(0,2,4);
-	}
+    @Test
+    public void digitsSet_shouldReturnsTheSetOfDigits_ofNegativeInteger() {
+        // GIVEN
+        int number = -42004;
+        // WHEN
+        Set<Integer> actualDigits = calculatorUnderTest.digitsSet(number);
+        assertThat(actualDigits).containsExactlyInAnyOrder(0, 2, 4);
+    }
 
-	@Test
-	public void digitsSet_shouldReturnsTheSetOfDigits_ofZeroInteger() {
-		// GIVEN
-		int number = 0;
-		// WHEN
-		Set<Integer> actualDigits   = calculatorUnderTest.digitsSet(number);
-		assertThat(actualDigits).containsExactly(0);
-	}
+    @Test
+    public void digitsSet_shouldReturnsTheSetOfDigits_ofZeroInteger() {
+        // GIVEN
+        int number = 0;
+        // WHEN
+        Set<Integer> actualDigits = calculatorUnderTest.digitsSet(number);
+        assertThat(actualDigits).containsExactly(0);
+    }
 }
