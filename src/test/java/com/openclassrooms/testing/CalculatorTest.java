@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CalculatorTest {
 
@@ -37,7 +38,6 @@ public class CalculatorTest {
 
     @BeforeEach
     public void initCalculator() {
-        int a = 10;
         System.out.println("Appel avant chaque test");
         calculatorUnderTest = new Calculator();
     }
@@ -108,7 +108,7 @@ public class CalculatorTest {
         calculatorUnderTest.longCalculation();
 
         // Assert
-        // ...
+        assertTrue(true);
     }
 
     @Test
