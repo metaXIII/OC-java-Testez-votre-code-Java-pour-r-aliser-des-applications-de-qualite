@@ -37,6 +37,7 @@ public class CalculatorTest {
 
     @BeforeEach
     public void initCalculator() {
+        int a = 10;
         System.out.println("Appel avant chaque test");
         calculatorUnderTest = new Calculator();
     }
