@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.openclassrooms.testing</groupId>
 	<artifactId>calculator</artifactId>
@@ -12,6 +12,7 @@
 		<maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
 		<bootstrap.version>4.3.1</bootstrap.version>
 		<springboot.version>2.2.0.RELEASE</springboot.version>
+		<dep.cucumber.version>4.8.0</dep.cucumber.version>
 	</properties>
 
 	<parent>
@@ -82,6 +83,25 @@
 			<artifactId>webdrivermanager</artifactId>
 			<version>3.7.1</version>
 		</dependency>
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-jvm</artifactId>
+			<version>${dep.cucumber.version}</version>
+			<scope>test</scope>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-spring</artifactId>
+			<version>${dep.cucumber.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-junit</artifactId>
+			<version>${dep.cucumber.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -93,6 +113,25 @@
 						<goals>
 							<goal>integration-test</goal>
 							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.5</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
 						</goals>
 					</execution>
 				</executions>
